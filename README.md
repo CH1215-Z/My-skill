@@ -25,7 +25,8 @@ Claude Code에서 쓰는 개인 작업 방식 스킬 모음입니다. 지금은 
 |---|---|
 | 그냥 한다 | 읽기, 검색, 시험·빌드, 재현, 캡처, 그림, 기록·커밋, 리뷰 보고서, 기존 그래프에 질문, 읽기만 하는 분석 |
 | 한 줄 알리고 한다 | 버그 수정, 실패 지점 로그 추가 |
-| 먼저 한 번 묻는다 | 프로그램 설치·설정 변경, 큰 그래프 새로 만들기, UI 변경(예시 먼저), 의존성 추가, 큰 리팩터링 |
+| 묻지 않고 설치 | impeccable·graphify·rea가 없으면 `setup_tools.sh`로 |
+| 먼저 한 번 묻는다 | 그 밖의 프로그램 설치·설정 변경, 큰 그래프 새로 만들기, UI 변경(예시 먼저), 의존성 추가, 큰 리팩터링 |
 | 분명히 말했을 때만 | 릴리스·배포, 강제 푸시, 데이터 삭제, 외부 메시지, 분석 대상 실행·변조 |
 
 ### 세부 문서
@@ -48,7 +49,7 @@ Claude Code에서 쓰는 개인 작업 방식 스킬 모음입니다. 지금은 
 ### 스크립트
 | 스크립트 | 하는 일 |
 |---|---|
-| `setup_tools.sh [--install]` | impeccable·graphify·rea·craft-anything 상태와 설치 계획(기본은 계획만) |
+| `setup_tools.sh [--check]` | impeccable·graphify·rea 중 없는 것 설치(`--check`는 상태만) |
 | `wait_release.sh owner/repo tag [초]` | GitHub 릴리스 결과물이 올라올 때까지 확인 |
 | `xvfb_app.sh N WxH -- 명령`, `x.sh N click/type/key/shot` | 가상 화면에서 앱 실행·조작·캡처 (리눅스) |
 | `render.js in.html out.png 폭 높이` | HTML/SVG 그림 → PNG (Playwright) |
@@ -67,11 +68,11 @@ mkdir -p ~/.claude/skills && cp -r My-skill/dev-way ~/.claude/skills/dev-way
 
 **claude.ai 계정 (모든 세션)**: `dev-way` 폴더를 zip으로 묶어(확장자 `.skill`) 업로드하거나 Save skill로 저장합니다.
 
-**같이 쓰는 프로그램(선택)**: 디자인·코드 그래프·프로그램 분석까지 쓰려면
+**같이 쓰는 프로그램**: 스킬이 새 세션에서 처음 쓰일 때 아래 스크립트를 스스로 실행해 없는 것만 설치합니다(impeccable은 자기 저장소에서 받아 옴, rea는 `npx rea-agents setup`). 손으로 돌려도 됩니다.
 ```bash
 sh ~/.claude/skills/dev-way/scripts/setup_tools.sh
 ```
-로 계획을 보고 `--install`. impeccable 스킬은 이 저장소에 포함하지 않으니 따로 설치합니다.
+상태만 보려면 `--check`. 새 스킬은 다음 요청부터, rea MCP 도구는 다음 세션부터 보입니다.
 
 **겹치는 스킬**: ponytail 계열과 같은 규칙을 담고 있으니, dev-way를 쓰면 ponytail·ponytail-review·ponytail-audit·ponytail-debt는 꺼 두는 게 깔끔합니다.
 

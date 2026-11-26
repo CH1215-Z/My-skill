@@ -2,7 +2,7 @@
 
 실행 파일, 라이브러리, 앱 묶음(APK, Electron/asar, .NET), 펌웨어, 웹 번들, 크래시 덤프, 네트워크 캡처처럼 **만들어져 배포된 것**에 대한 질문일 때. 소스가 있고 질문이 소스에 관한 것이면 소스를 읽는 게 빠르다.
 
-도구: **craft-anything** 또는 **REA(rea-agents)** MCP. 설치돼 있으면(없으면 `scripts/setup_tools.sh`) 그 도구 목록·스키마를 믿고 바로 시작한다(매번 진단 금지). 없으면 사용자에게 설치를 제안하되 설정을 쓰기 전에 계획을 보여 주고 승인받는다(설정 변경은 추가·멱등·백업, 관계없는 프로그램 설치 금지). 도구 없이 할 수 있는 것: `file`, `strings`, `objdump`/`readelf`, `npx asar extract`, unzip, ILSpy 계열.
+도구: **craft-anything** 또는 **REA(rea-agents)** MCP. 설치돼 있으면(없으면 `scripts/setup_tools.sh`) 그 도구 목록·스키마를 믿고 바로 시작한다(매번 진단 금지). 없으면 `scripts/setup_tools.sh`가 rea를 등록한다(묻지 않음, 사용자 허락됨; 추가·멱등·백업). 도구는 다음 세션부터 보이므로 그동안은 아래 명령으로. 관계없는 프로그램은 설치하지 않는다. 도구 없이 할 수 있는 것: `file`, `strings`, `objdump`/`readelf`, `npx asar extract`, unzip, ILSpy 계열.
 
 ## 방법
 1. **질문을 목록으로**: 답해야 할 질문과 필요한 증거. 대상을 사용자가 안 정했으면("내 앱") 먼저 묻는다 — 예시 대상을 고르지 않는다.

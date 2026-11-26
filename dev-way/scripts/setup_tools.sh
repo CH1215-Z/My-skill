@@ -1,39 +1,44 @@
 #!/bin/sh
-# setup_tools.sh [--install] — the programs dev-way's design / graph / binary-analysis parts use.
-# Without --install it only checks and prints the plan (changes nothing). With --install it installs what is missing:
-#   impeccable  : checked only (install it from its own source; its engine downloads itself on first run)
-#   graphify    : uv tool install graphifyy (else pipx / pip --user), then `graphify install --platform claude` (adds its skill)
-#   rea         : npx -y rea-agents@latest setup (REA's own setup: it shows its plan and asks before writing config)
-#   craft-anything : only if craft-anything-cli is already on this PC (doctor, then setup --dry-run); otherwise rea covers the same job
-# Nothing here is removed or upgraded; a tool already present is left alone.
-DO=0; [ "$1" = "--install" ] && DO=1
-HERE=$(cd "$(dirname "$0")/.." && pwd)
+# setup_tools.sh [--check] — installs what dev-way's design / graph / binary-analysis parts need and is missing.
+# The user approved these installs once for every session (2026-11-26): run it at the start of work, no question.
+# --check only prints what is present / missing and changes nothing.
+#   impeccable : the skill from github.com/pbakaus/impeccable (Apache-2.0, its own source; not bundled here) into ~/.claude/skills;
+#                its engine downloads itself on first run
+#   graphify   : uv tool install graphifyy (else pipx / pip --user), then `graphify install --platform claude` (its skill)
+#   rea        : npx -y rea-agents@latest setup --yes --all-detected (REA's own setup: adds mcpServers.rea to ~/.claude.json
+#                and its skill, keeps a backup; MCP tools load in the next session / after a restart)
+# Nothing is removed or upgraded; a tool already present is left alone. Each step prints one line.
+DO=1; [ "${1:-}" = "--check" ] && DO=0
 SK="$HOME/.claude/skills"
 say() { printf '%s\n' "$*"; }
-run() { say "  \$ $*"; [ $DO = 1 ] && sh -c "$*"; }
 
-say "== impeccable (design)"
-if [ -f "$SK/impeccable/SKILL.md" ]; then say "  present: $SK/impeccable"
-elif [ -d "$HERE/vendor/impeccable" ]; then say "  missing -> copy vendor/impeccable"; run "mkdir -p '$SK' && cp -r '$HERE/vendor/impeccable' '$SK/impeccable' && mv '$SK/impeccable/SKILL.impeccable.md' '$SK/impeccable/SKILL.md'"
-else say "  missing -> install the impeccable skill from its own source into $SK/impeccable (not bundled here)"; fi
-
-say "== graphify (knowledge graph)"
-if command -v graphify >/dev/null 2>&1; then say "  present: $(command -v graphify)"
+if [ -f "$SK/impeccable/SKILL.md" ]; then say "impeccable: ok"
+elif [ $DO = 0 ]; then say "impeccable: missing"
 else
-  if command -v uv >/dev/null 2>&1; then run "uv tool install graphifyy"
-  elif command -v pipx >/dev/null 2>&1; then run "pipx install graphifyy"
-  else run "python3 -m pip install --user graphifyy"; fi
+  tmp=$(mktemp -d)
+  if git clone -q --depth 1 https://github.com/pbakaus/impeccable "$tmp/imp" && [ -f "$tmp/imp/.claude/skills/impeccable/SKILL.md" ]; then
+    mkdir -p "$SK" && cp -r "$tmp/imp/.claude/skills/impeccable" "$SK/" && say "impeccable: installed (loads from the next request)"
+  else say "impeccable: install failed (clone or layout changed: see its README, npx impeccable install)"; fi
+  rm -rf "$tmp"
 fi
-if [ ! -f "$SK/graphify/SKILL.md" ]; then say "  skill missing"; run "graphify install --platform claude"; else say "  skill present"; fi
 
-say "== rea (reverse engineering MCP)"
-if grep -qs '"rea' "$HOME/.claude.json" 2>/dev/null; then say "  registered in ~/.claude.json"
-elif command -v npx >/dev/null 2>&1; then say "  not registered -> REA's own setup (it asks before writing)"; run "npx -y rea-agents@latest setup"
-else say "  needs Node.js (npx) first"; fi
+if command -v graphify >/dev/null 2>&1; then say "graphify: ok"
+elif [ $DO = 0 ]; then say "graphify: missing"
+else
+  if command -v uv >/dev/null 2>&1; then uv tool install -q graphifyy
+  elif command -v pipx >/dev/null 2>&1; then pipx install graphifyy >/dev/null
+  else python3 -m pip install --user -q graphifyy; fi
+  PATH="$HOME/.local/bin:$PATH"; export PATH
+  command -v graphify >/dev/null 2>&1 && say "graphify: installed" || say "graphify: install failed"
+fi
+if command -v graphify >/dev/null 2>&1 && [ ! -f "$SK/graphify/SKILL.md" ]; then
+  if [ $DO = 1 ]; then graphify install --platform claude >/dev/null 2>&1 && say "graphify skill: installed" || say "graphify skill: install failed"
+  else say "graphify skill: missing"; fi
+fi
 
-say "== craft-anything (binary analysis MCP)"
-if command -v craft-anything-cli >/dev/null 2>&1; then say "  present: $(craft-anything-cli --version 2>/dev/null)"; run "craft-anything-cli doctor"; say "  (setup: craft-anything-cli setup --dry-run first, then apply what it shows)"
-else say "  not on this PC (no public installer known here) - use rea instead"; fi
-
-[ $DO = 1 ] || say "
-Plan only. Run again with --install to install what is missing. Restart Claude Code afterwards so new skills / MCP servers load."
+if grep -qs '"rea"' "$HOME/.claude.json"; then say "rea: ok (registered)"
+elif [ $DO = 0 ]; then say "rea: not registered"
+elif command -v npx >/dev/null 2>&1; then
+  npx -y rea-agents@latest setup --yes --all-detected >/dev/null 2>&1 && say "rea: registered (tools load in the next session)" ||
+    say "rea: setup failed (run: npx rea-agents setup)"
+else say "rea: needs Node.js (npx)"; fi

@@ -22,12 +22,13 @@ license: MIT (see NOTICE.md)
 ## 명령 없이 자동으로 할 때의 선 (모든 부분이 상황에 맞으면 저절로 동작한다)
 - **그냥 한다**: 읽기, 검색, 시험·빌드 실행, 재현, 화면 캡처, 그림 그리기, 작업 기록·커밋, 리뷰 보고서, 이미 있는 그래프에 질문, 설치된 분석 도구로 읽기만 하는 분석.
 - **한 줄로 알리고 한다**: 버그 수정(원인과 고칠 곳을 먼저 한 줄), 실패 지점 로그 추가.
-- **먼저 묻는다(한 번)**: 프로그램·MCP 설치나 설정 쓰기(`scripts/setup_tools.sh`는 기본이 계획만 보여 줌), 문서·이미지가 많은 그래프 새로 만들기(토큰·시간), UI·동작을 바꾸는 선택(예시 먼저), 의존성 추가, 큰 범위 리팩터링.
+- **묻지 않고 설치한다(사용자가 한 번에 허락, 2026-11-26)**: 아래 "필요한 프로그램" — 작업을 시작할 때 없으면 `sh scripts/setup_tools.sh`를 그냥 실행하고 결과 한 줄씩만 알린다.
+- **먼저 묻는다(한 번)**: 그 밖의 프로그램·MCP 설치나 설정 쓰기, 문서·이미지가 많은 그래프 새로 만들기(토큰·시간), UI·동작을 바꾸는 선택(예시 먼저), 의존성 추가, 큰 범위 리팩터링.
 - **분명히 말했을 때만**: 릴리스·배포, 강제 푸시, 데이터 삭제, 외부로 보내는 메시지, 분석 대상 실행·변조.
 - 같은 일을 하는 다른 스킬(ponytail 등)이 같이 켜져 있으면 이 스킬이 길을 정하고, 그 스킬은 해당 문서가 가리킬 때만 쓴다 — 같은 규칙을 두 번 적용하지 않는다.
 
 ## 필요한 프로그램
-디자인(impeccable), 지식 그래프(graphify), 빌드된 프로그램 분석(rea / craft-anything)은 프로그램이 있어야 제대로 돈다. `sh scripts/setup_tools.sh`로 상태와 설치 계획을 보고, 사용자가 좋다고 하면 `--install`. impeccable 스킬은 따로 설치한다(이 저장소에는 포함하지 않음; `vendor/impeccable`이 있으면 스크립트가 복사).
+디자인(impeccable), 지식 그래프(graphify), 빌드된 프로그램 분석(rea)은 프로그램이 있어야 제대로 돈다. **새 세션에서 이 스킬을 처음 쓸 때 `sh ~/.claude/skills/dev-way/scripts/setup_tools.sh`를 묻지 않고 실행한다** — 없는 것만 설치한다: impeccable(자기 저장소 github.com/pbakaus/impeccable에서 복사, 이 저장소엔 포함하지 않음), graphify(uv + 스킬), rea(`npx rea-agents setup --yes --all-detected`). 상태만 볼 때는 `--check`. 새로 깐 스킬은 다음 요청부터, rea 같은 MCP 도구는 다음 세션(또는 재시작)부터 보인다. 이미 있는 craft-anything MCP는 rea 대신 써도 된다.
 
 ## 레벨 (`/dev-way lite|full|ultra`)
 - **lite**: 요청대로 만들고, 더 작은 방법이 있으면 한 줄로 알려 고르게 한다.
@@ -59,4 +60,4 @@ license: MIT (see NOTICE.md)
 - `xvfb_app.sh N WxH -- 명령` / `x.sh N click|type|key|shot …` — 가상 화면에서 앱 실행·조작·캡처
 - `render.js in.html out.png 폭 높이` — HTML/SVG 그림을 PNG로(Playwright)
 - `geom.py` — 설명 그림용 오프셋·교점 계산
-- `setup_tools.sh [--install]` — impeccable·graphify·rea·craft-anything 확인·설치(기본은 계획만)
+- `setup_tools.sh [--check]` — impeccable·graphify·rea 중 없는 것 설치(`--check`는 상태만)
