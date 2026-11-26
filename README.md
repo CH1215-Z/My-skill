@@ -43,7 +43,7 @@ Claude Code에서 쓰는 개인 작업 방식 스킬 모음입니다. 지금은 
 | `writing.md` | 답·문서·PR·커밋 문장 (AI 티 빼기) |
 | `design.md` | 화면 디자인 품질 (impeccable 요약) |
 | `binary-analysis.md` | 빌드된 프로그램 분석 (craft-anything / REA) |
-| `knowledge-graph.md` | 코드 그래프 (graphify, 명령어로 직접 써서 토큰 절약) |
+| `knowledge-graph.md` | 코드 그래프 (graphify): 구성이 잡히면 한 번 전체 생성, 이후 갱신(`graphify update`, 약 1분)과 검색만, 명령어로 직접 써서 토큰 절약 |
 
 ### 스크립트
 | 스크립트 | 하는 일 |
@@ -74,6 +74,9 @@ sh ~/.claude/skills/dev-way/scripts/setup_tools.sh
 로 계획을 보고 `--install`. impeccable 스킬은 이 저장소에 포함하지 않으니 따로 설치합니다.
 
 **겹치는 스킬**: ponytail 계열과 같은 규칙을 담고 있으니, dev-way를 쓰면 ponytail·ponytail-review·ponytail-audit·ponytail-debt는 꺼 두는 게 깔끔합니다.
+
+## 라이선스
+MIT (`LICENSE`). 참고한 원 저작물의 라이선스는 `dev-way/NOTICE.md`.
 
 ## 출처
 ponytail(MIT), pstack/poteto(MIT, Lauren Tan), impeccable(Apache 2.0), REA(MIT), craft-anything, graphify(Apache-2.0/MIT)의 생각을 한국어로 요약·재구성했습니다. 자세한 내용은 `dev-way/NOTICE.md`.
